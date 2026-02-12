@@ -396,6 +396,30 @@
   color: var(--color-text);
 }
 
+.docButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.docBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-xl);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-inverse);
+  background: var(--color-accent);
+  border-radius: var(--radius-md);
+  transition: background 0.2s;
+}
+
+.docBtn:hover {
+  background: var(--color-accent-hover);
+}
+
 .featuresList {
   display: grid;
   grid-template-columns: 1fr 1fr;

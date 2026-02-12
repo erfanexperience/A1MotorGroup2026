@@ -5,11 +5,7 @@ export default defineConfig({
   plugins: [react()],
   publicDir: 'public',
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
-    },
+    // For full-stack local dev (API + frontend), use: npm run dev:vercel (vercel dev)
+    // This config runs frontend only; /api is served by Vercel serverless when using vercel dev
   },
 })

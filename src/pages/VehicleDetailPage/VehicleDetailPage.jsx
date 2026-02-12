@@ -267,6 +267,34 @@ export default function VehicleDetailPage() {
               <p className={styles.conditionNotes}>{vehicle.conditionNotes}</p>
             </section>
           )}
+
+          {(vehicle.carfaxReportUrl || vehicle.windowStickerUrl) && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Documents</h2>
+              <div className={styles.docButtons}>
+                {vehicle.carfaxReportUrl && (
+                  <a
+                    href={vehicle.carfaxReportUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.docBtn}
+                  >
+                    View Carfax Report
+                  </a>
+                )}
+                {vehicle.windowStickerUrl && (
+                  <a
+                    href={vehicle.windowStickerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.docBtn}
+                  >
+                    View Window Sticker
+                  </a>
+                )}
+              </div>
+            </section>
+          )}
         </div>
 
         <aside className={styles.rightCol}>

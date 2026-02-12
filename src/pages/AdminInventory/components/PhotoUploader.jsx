@@ -1,6 +1,29 @@
 import { useState, useRef } from 'react'
-import { uploadPhotos } from '../../../utils/api'
+import { supabase, BUCKET, getPublicUrl } from '../../../utils/supabaseClient'
 import styles from './PhotoUploader.module.css'
+
+function generateId() {
+  return `${Date.now()}-${Math.round(Math.random() * 1e9)}`
+}
+
+async function uploadToSupabase(vehicleId, files) {
+  if (!supabase) throw new Error('Supabase not configured')
+  const basePath = `vehicles/${vehicleId || 'temp'}/images`
+  const photos = []
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+    const path = `${basePath}/${generateId()}-${file.name}`
+    const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+    })
+    if (error) throw new Error(error.message)
+    const url = getPublicUrl(path)
+    photos.push({ url, isCover: false, order: photos.length })
+  }
+  return photos
+}
 
 export default function PhotoUploader({ vehicleId, photos = [], onChange }) {
   const [uploading, setUploading] = useState(false)
@@ -8,16 +31,13 @@ export default function PhotoUploader({ vehicleId, photos = [], onChange }) {
   const fileInputRef = useRef(null)
 
   const handleFileSelect = async (e) => {
-    const files = Array.from(e.target.files)
+    const files = Array.from(e.target.files || []).filter((f) => f.type.startsWith('image/'))
     if (files.length === 0) return
 
     try {
       setUploading(true)
-      const result = await uploadPhotos(vehicleId || 'temp', files)
-      const newPhotos = [...photos, ...result.photos].map((p, i) => ({
-        ...p,
-        order: i,
-      }))
+      const newUrls = await uploadToSupabase(vehicleId || 'temp', files)
+      const newPhotos = [...photos, ...newUrls].map((p, i) => ({ ...p, order: i }))
       onChange(newPhotos)
     } catch (error) {
       alert('Failed to upload photos: ' + error.message)
@@ -33,16 +53,13 @@ export default function PhotoUploader({ vehicleId, photos = [], onChange }) {
 
   const handleDrop = async (e) => {
     e.preventDefault()
-    const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith('image/'))
+    const files = Array.from(e.dataTransfer.files || []).filter((f) => f.type.startsWith('image/'))
     if (files.length === 0) return
 
     try {
       setUploading(true)
-      const result = await uploadPhotos(vehicleId || 'temp', files)
-      const newPhotos = [...photos, ...result.photos].map((p, i) => ({
-        ...p,
-        order: i,
-      }))
+      const newUrls = await uploadToSupabase(vehicleId || 'temp', files)
+      const newPhotos = [...photos, ...newUrls].map((p, i) => ({ ...p, order: i }))
       onChange(newPhotos)
     } catch (error) {
       alert('Failed to upload photos: ' + error.message)

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { decodeVIN, addVehicle, updateVehicle, uploadDocument } from '../../../utils/api'
+import { decodeVIN, addVehicle, updateVehicle, commitPhotos } from '../../../utils/api'
+import { uploadDocumentToStorage } from '../../../utils/supabaseClient'
 import PhotoUploader from './PhotoUploader'
 import styles from './VehicleForm.module.css'
 
@@ -115,7 +116,8 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
     if (!file) return
     try {
       setDocUploading((prev) => ({ ...prev, [type]: true }))
-      const { url } = await uploadDocument(vehicle?.id || tempId, file)
+      const docType = type === 'windowSticker' ? 'windowSticker' : 'carfax'
+      const url = await uploadDocumentToStorage(vehicle?.id || tempId, docType, file)
       update(type === 'windowSticker' ? 'windowStickerUrl' : 'carfaxReportUrl', url)
     } catch (err) {
       alert('Failed to upload: ' + err.message)
@@ -139,10 +141,15 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
         features: form.features ? form.features.split('\n').filter(Boolean) : [],
       }
 
+      let saved
       if (vehicle?.id) {
-        await updateVehicle(vehicle.id, vehicleData)
+        saved = await updateVehicle(vehicle.id, vehicleData)
       } else {
-        await addVehicle(vehicleData)
+        saved = await addVehicle(vehicleData)
+      }
+
+      if (saved?.id && form.photos?.length > 0) {
+        await commitPhotos(saved.id, form.photos)
       }
       onSave()
     } catch (error) {
@@ -443,7 +450,7 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
               <label className={styles.fileLabel}>
                 <input
                   type="file"
-                  accept=".pdf,image/*"
+                  accept=".pdf,application/pdf"
                   onChange={(e) => handleDocumentUpload('windowSticker', e)}
                   disabled={docUploading.windowSticker}
                   className={styles.fileInput}
@@ -464,7 +471,7 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
               <label className={styles.fileLabel}>
                 <input
                   type="file"
-                  accept=".pdf,image/*"
+                  accept=".pdf,application/pdf"
                   onChange={(e) => handleDocumentUpload('carfax', e)}
                   disabled={docUploading.carfax}
                   className={styles.fileInput}

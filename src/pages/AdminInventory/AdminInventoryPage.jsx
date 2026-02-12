@@ -1,19 +1,33 @@
 import { useState, useEffect } from 'react'
 import InventoryList from './components/InventoryList'
 import VehicleForm from './components/VehicleForm'
-import { getInventory } from '../../utils/api'
+import { getInventory, adminMe, adminLogin, adminLogout } from '../../utils/api'
 import styles from './AdminInventoryPage.module.css'
 
 export default function AdminInventoryPage() {
+  const [authChecked, setAuthChecked] = useState(false)
+  const [authenticated, setAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
   const [vehicles, setVehicles] = useState([])
   const [selectedVehicle, setSelectedVehicle] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    adminMe()
+      .then((r) => {
+        setAuthenticated(r.authenticated === true)
+        if (r.authenticated) loadInventory()
+      })
+      .catch(() => setAuthenticated(false))
+      .finally(() => setAuthChecked(true))
+  }, [])
+
   const loadInventory = async () => {
     try {
       setLoading(true)
-      const data = await getInventory()
+      const data = await getInventory({ all: true })
       setVehicles(data)
     } catch (error) {
       console.error('Failed to load inventory:', error)
@@ -22,9 +36,24 @@ export default function AdminInventoryPage() {
     }
   }
 
-  useEffect(() => {
-    loadInventory()
-  }, [])
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setLoginError('')
+    try {
+      await adminLogin(password)
+      setAuthenticated(true)
+      setPassword('')
+      loadInventory()
+    } catch (err) {
+      setLoginError(err.message || 'Invalid password')
+    }
+  }
+
+  const handleLogout = async () => {
+    await adminLogout()
+    setAuthenticated(false)
+    setVehicles([])
+  }
 
   const handleVehicleSaved = () => {
     loadInventory()
@@ -53,6 +82,40 @@ export default function AdminInventoryPage() {
     setSelectedVehicle(null)
   }
 
+  if (!authChecked) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.loading}>Checking access...</div>
+      </div>
+    )
+  }
+
+  if (!authenticated) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.loginCard}>
+          <h1 className={styles.loginTitle}>Admin Login</h1>
+          <p className={styles.loginSubtitle}>Enter password to manage inventory</p>
+          <form onSubmit={handleLogin} className={styles.loginForm}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className={styles.loginInput}
+              autoFocus
+              aria-label="Password"
+            />
+            {loginError && <p className={styles.loginError} role="alert">{loginError}</p>}
+            <button type="submit" className={styles.loginBtn}>
+              Log in
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -61,9 +124,14 @@ export default function AdminInventoryPage() {
             <h1 className={styles.title}>Inventory Manager</h1>
             <p className={styles.subtitle}>Manage your vehicle inventory</p>
           </div>
-          <button type="button" onClick={openAddVehicle} className={styles.addBtn}>
-            Add Vehicle
-          </button>
+          <div className={styles.headerActions}>
+            <button type="button" onClick={openAddVehicle} className={styles.addBtn}>
+              Add Vehicle
+            </button>
+            <button type="button" onClick={handleLogout} className={styles.logoutBtn}>
+              Log out
+            </button>
+          </div>
         </div>
       </header>
 
