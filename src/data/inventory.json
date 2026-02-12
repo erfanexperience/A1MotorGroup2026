@@ -1,0 +1,35 @@
+[
+  {
+    "id": "2021-toyota-4runner",
+    "vin": "",
+    "year": 2021,
+    "make": "Toyota",
+    "model": "4Runner",
+    "trim": "",
+    "bodyClass": "SUV",
+    "driveType": "",
+    "fuelType": "",
+    "engine": "",
+    "transmission": "Automatic",
+    "stockNumber": "",
+    "mileage": 0,
+    "price": 0,
+    "exteriorColor": "",
+    "interiorColor": "",
+    "titleStatus": "Clean Title",
+    "conditionNotes": "",
+    "description": "",
+    "features": [],
+    "photos": [
+      {
+        "url": "/Assests/Cars/2021 Toyota 4Runner/2021 Toyota 4Runner  1.webp",
+        "isCover": true,
+        "order": 0
+      }
+    ],
+    "coverPhotoUrl": "/Assests/Cars/2021 Toyota 4Runner/2021 Toyota 4Runner  1.webp",
+    "status": "Published",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+]
