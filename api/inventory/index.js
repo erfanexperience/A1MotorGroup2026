@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
     return res.status(204).end()
   }
@@ -53,6 +53,7 @@ export default async function handler(req, res) {
     }
 
     const vehicles = list.map((row) => rowToVehicle(row, photosByVehicle[row.id] || []))
+    res.setHeader('Content-Type', 'application/json')
     return res.status(200).json(vehicles)
   }
 
@@ -75,5 +76,31 @@ export default async function handler(req, res) {
     return
   }
 
+  if (req.method === 'DELETE') {
+    let id = req.query?.id
+    if (!id && typeof req.url === 'string') {
+      const m = req.url.match(/\/api\/inventory\/([^/?]+)/)
+      if (m) id = m[1]
+    }
+    if (!id) {
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(400).json({ ok: false, error: 'Missing id' })
+    }
+    await requireAdmin(req, res, async () => {
+      const { error: delPhotos } = await supabaseAdmin.from('vehicle_photos').delete().eq('vehicle_id', id)
+      if (delPhotos) console.error('delete vehicle_photos error', { id, supabaseError: delPhotos })
+      const { error } = await supabaseAdmin.from('vehicles').delete().eq('id', id)
+      if (error) {
+        console.error('delete vehicle error', { id, supabaseError: error })
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(500).json({ ok: false, error: 'Server error. Please try again.' })
+      }
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json({ ok: true })
+    })
+    return
+  }
+
+  res.setHeader('Content-Type', 'application/json')
   res.status(405).json({ error: 'Method not allowed' })
 }

@@ -4,12 +4,18 @@ import { rowToVehicle, vehicleToRow } from '../_utils/vehicleMap.js'
 
 export const config = { runtime: 'nodejs' }
 
-export default async function handler(req, res) {
-  const id = req.query?.id
-  if (!id) return res.status(400).json({ error: 'Missing id' })
+function json(res, status, data) {
+  res.setHeader('Content-Type', 'application/json')
+  return res.status(status).json(data)
+}
 
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
   res.setHeader('Access-Control-Allow-Credentials', 'true')
+
+  const id = req.query?.id
+  if (!id) return json(res, 400, { ok: false, error: 'Missing id' })
+
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
@@ -27,12 +33,12 @@ export default async function handler(req, res) {
     } catch (_) {}
 
     const { data: row, error } = await supabaseAdmin.from('vehicles').select('*').eq('id', id).single()
-    if (error || !row) return res.status(404).json({ error: 'Vehicle not found' })
-    if (row.status !== 'Published' && !isAdmin) return res.status(404).json({ error: 'Vehicle not found' })
+    if (error || !row) return json(res, 404, { error: 'Vehicle not found' })
+    if (row.status !== 'Published' && !isAdmin) return json(res, 404, { error: 'Vehicle not found' })
 
     const { data: photos } = await supabaseAdmin.from('vehicle_photos').select('*').eq('vehicle_id', id).order('sort_order')
     const vehicle = rowToVehicle(row, photos || [])
-    return res.status(200).json(vehicle)
+    return json(res, 200, vehicle)
   }
 
   if (req.method === 'PUT') {
@@ -49,11 +55,11 @@ export default async function handler(req, res) {
         .single()
 
       if (error) {
-        console.error('inventory update error', error)
-        return res.status(500).json({ error: error.message })
+        console.error('inventory update error', { id, supabaseError: error })
+        return json(res, 500, { ok: false, error: error.message })
       }
       const { data: photos } = await supabaseAdmin.from('vehicle_photos').select('*').eq('vehicle_id', id).order('sort_order')
-      return res.status(200).json(rowToVehicle(data, photos || []))
+      return json(res, 200, rowToVehicle(data, photos || []))
     })
     return
   }
@@ -61,13 +67,16 @@ export default async function handler(req, res) {
   if (req.method === 'DELETE') {
     await requireAdmin(req, res, async () => {
       const { error: delPhotos } = await supabaseAdmin.from('vehicle_photos').delete().eq('vehicle_id', id)
-      if (delPhotos) console.error('delete photos', delPhotos)
+      if (delPhotos) console.error('delete vehicle_photos error', { id, supabaseError: delPhotos })
       const { error } = await supabaseAdmin.from('vehicles').delete().eq('id', id)
-      if (error) return res.status(500).json({ error: error.message })
-      return res.status(200).json({ success: true })
+      if (error) {
+        console.error('delete vehicle error', { id, supabaseError: error })
+        return json(res, 500, { ok: false, error: 'Server error. Please try again.' })
+      }
+      return json(res, 200, { ok: true })
     })
     return
   }
 
-  res.status(405).json({ error: 'Method not allowed' })
+  return json(res, 405, { error: 'Method not allowed' })
 }

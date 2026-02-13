@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { decodeVIN, addVehicle, updateVehicle, commitPhotos, uploadDocument } from '../../../utils/api'
 import PhotoUploader from './PhotoUploader'
 import styles from './VehicleForm.module.css'
@@ -40,6 +40,8 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
   const [errors, setErrors] = useState({})
   const [docUploading, setDocUploading] = useState({ windowSticker: false, carfax: false })
   const [tempId] = useState(() => `temp-${Date.now()}`)
+  const windowStickerInputRef = useRef(null)
+  const carfaxInputRef = useRef(null)
 
   useEffect(() => {
     if (vehicle) {
@@ -117,10 +119,15 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
       alert('Only PDF files are allowed')
       return
     }
+    if (!vehicle?.id) {
+      alert('Save vehicle first, then upload documents.')
+      e.target.value = ''
+      return
+    }
     try {
       setDocUploading((prev) => ({ ...prev, [type]: true }))
       const docType = type === 'windowSticker' ? 'windowSticker' : 'carfax'
-      const url = await uploadDocument(vehicle?.id || tempId, docType, file)
+      const url = await uploadDocument(vehicle.id, docType, file)
       update(type === 'windowSticker' ? 'windowStickerUrl' : 'carfaxReportUrl', url)
     } catch (err) {
       alert(err.message || 'Failed to upload document')
@@ -128,6 +135,17 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
       setDocUploading((prev) => ({ ...prev, [type]: false }))
       e.target.value = ''
     }
+  }
+
+  const handleDocumentButtonClick = (type, e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!vehicle?.id) {
+      alert('Save vehicle first, then upload documents.')
+      return
+    }
+    if (type === 'windowSticker') windowStickerInputRef.current?.click()
+    else carfaxInputRef.current?.click()
   }
 
   const handleSubmit = async (e) => {
@@ -441,7 +459,7 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
           <h3 className={styles.sectionTitle}>Documents</h3>
           <div className={styles.docRow}>
             <div className={styles.docField}>
-              <label className={styles.label}>Window Sticker</label>
+              <span className={styles.label}>Window Sticker</span>
               {form.windowStickerUrl ? (
                 <div className={styles.docCurrent}>
                   <a href={form.windowStickerUrl} target="_blank" rel="noopener noreferrer" className={styles.docLink}>
@@ -450,19 +468,27 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
                   <span className={styles.docReplace}> or replace:</span>
                 </div>
               ) : null}
-              <label className={styles.fileLabel}>
-                <input
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  onChange={(e) => handleDocumentUpload('windowSticker', e)}
-                  disabled={docUploading.windowSticker}
-                  className={styles.fileInput}
-                />
+              <input
+                ref={windowStickerInputRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={(e) => handleDocumentUpload('windowSticker', e)}
+                disabled={docUploading.windowSticker}
+                className={styles.fileInput}
+                aria-hidden
+                tabIndex={-1}
+              />
+              <button
+                type="button"
+                className={styles.fileLabel}
+                onClick={(e) => handleDocumentButtonClick('windowSticker', e)}
+                disabled={docUploading.windowSticker}
+              >
                 {docUploading.windowSticker ? 'Uploading...' : form.windowStickerUrl ? 'Replace file' : 'Upload Window Sticker'}
-              </label>
+              </button>
             </div>
             <div className={styles.docField}>
-              <label className={styles.label}>Carfax Report</label>
+              <span className={styles.label}>Carfax Report</span>
               {form.carfaxReportUrl ? (
                 <div className={styles.docCurrent}>
                   <a href={form.carfaxReportUrl} target="_blank" rel="noopener noreferrer" className={styles.docLink}>
@@ -471,16 +497,24 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
                   <span className={styles.docReplace}> or replace:</span>
                 </div>
               ) : null}
-              <label className={styles.fileLabel}>
-                <input
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  onChange={(e) => handleDocumentUpload('carfax', e)}
-                  disabled={docUploading.carfax}
-                  className={styles.fileInput}
-                />
+              <input
+                ref={carfaxInputRef}
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={(e) => handleDocumentUpload('carfax', e)}
+                disabled={docUploading.carfax}
+                className={styles.fileInput}
+                aria-hidden
+                tabIndex={-1}
+              />
+              <button
+                type="button"
+                className={styles.fileLabel}
+                onClick={(e) => handleDocumentButtonClick('carfax', e)}
+                disabled={docUploading.carfax}
+              >
                 {docUploading.carfax ? 'Uploading...' : form.carfaxReportUrl ? 'Replace file' : 'Upload Carfax Report'}
-              </label>
+              </button>
             </div>
           </div>
         </section>
