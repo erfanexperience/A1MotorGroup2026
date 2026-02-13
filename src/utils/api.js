@@ -100,7 +100,7 @@ export async function updateVehicle(id, vehicle) {
 }
 
 export async function deleteVehicle(id) {
-  await apiFetch(`${API_BASE}/inventory/${id}`, { method: 'DELETE' })
+  await apiFetch(`${API_BASE}/inventory?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
   return {}
 }
 
