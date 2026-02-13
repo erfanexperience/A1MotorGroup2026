@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { decodeVIN, addVehicle, updateVehicle, commitPhotos } from '../../../utils/api'
-import { uploadDocumentToStorage } from '../../../utils/supabaseClient'
+import { decodeVIN, addVehicle, updateVehicle, commitPhotos, uploadDocument } from '../../../utils/api'
 import PhotoUploader from './PhotoUploader'
 import styles from './VehicleForm.module.css'
 
@@ -114,13 +113,17 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
   const handleDocumentUpload = async (type, e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    if (file.type !== 'application/pdf') {
+      alert('Only PDF files are allowed')
+      return
+    }
     try {
       setDocUploading((prev) => ({ ...prev, [type]: true }))
       const docType = type === 'windowSticker' ? 'windowSticker' : 'carfax'
-      const url = await uploadDocumentToStorage(vehicle?.id || tempId, docType, file)
+      const url = await uploadDocument(vehicle?.id || tempId, docType, file)
       update(type === 'windowSticker' ? 'windowStickerUrl' : 'carfaxReportUrl', url)
     } catch (err) {
-      alert('Failed to upload: ' + err.message)
+      alert(err.message || 'Failed to upload document')
     } finally {
       setDocUploading((prev) => ({ ...prev, [type]: false }))
       e.target.value = ''

@@ -1,25 +1,13 @@
 import { useState, useRef } from 'react'
-import { supabase, BUCKET, getPublicUrl } from '../../../utils/supabaseClient'
+import { uploadImage } from '../../../utils/api'
 import styles from './PhotoUploader.module.css'
 
-function generateId() {
-  return `${Date.now()}-${Math.round(Math.random() * 1e9)}`
-}
-
-async function uploadToSupabase(vehicleId, files) {
-  if (!supabase) throw new Error('Supabase not configured')
-  const basePath = `vehicles/${vehicleId || 'temp'}/images`
+async function uploadFilesViaApi(vehicleId, files) {
   const photos = []
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
-    const path = `${basePath}/${generateId()}-${file.name}`
-    const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
-      cacheControl: '3600',
-      upsert: false,
-    })
-    if (error) throw new Error(error.message)
-    const url = getPublicUrl(path)
+    if (!file.type.startsWith('image/')) continue
+    const { url } = await uploadImage(vehicleId || 'temp', file)
     photos.push({ url, isCover: false, order: photos.length })
   }
   return photos
@@ -36,11 +24,11 @@ export default function PhotoUploader({ vehicleId, photos = [], onChange }) {
 
     try {
       setUploading(true)
-      const newUrls = await uploadToSupabase(vehicleId || 'temp', files)
+      const newUrls = await uploadFilesViaApi(vehicleId || 'temp', files)
       const newPhotos = [...photos, ...newUrls].map((p, i) => ({ ...p, order: i }))
       onChange(newPhotos)
     } catch (error) {
-      alert('Failed to upload photos: ' + error.message)
+      alert(error.message || 'Failed to upload photos')
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -58,11 +46,11 @@ export default function PhotoUploader({ vehicleId, photos = [], onChange }) {
 
     try {
       setUploading(true)
-      const newUrls = await uploadToSupabase(vehicleId || 'temp', files)
+      const newUrls = await uploadFilesViaApi(vehicleId || 'temp', files)
       const newPhotos = [...photos, ...newUrls].map((p, i) => ({ ...p, order: i }))
       onChange(newPhotos)
     } catch (error) {
-      alert('Failed to upload photos: ' + error.message)
+      alert(error.message || 'Failed to upload photos')
     } finally {
       setUploading(false)
     }
