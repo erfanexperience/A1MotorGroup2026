@@ -82,6 +82,13 @@ export default function AdminInventoryPage() {
     setSelectedVehicle(null)
   }
 
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Good Morning'
+    if (hour < 17) return 'Good Afternoon'
+    return 'Good Evening'
+  }
+
   if (!authChecked) {
     return (
       <div className={styles.page}>
@@ -118,6 +125,10 @@ export default function AdminInventoryPage() {
 
   return (
     <div className={styles.page}>
+      <div className={styles.greeting}>
+        <img src="/Assests/Nick.webp" alt="" className={styles.greetingAvatar} width={48} height={48} />
+        <p className={styles.greetingText}>{getGreeting()}, Nick</p>
+      </div>
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div>
