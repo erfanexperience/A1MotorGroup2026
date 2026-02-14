@@ -74,13 +74,15 @@ export default function InventoryList({ vehicles, loading, onEdit, onDelete, onR
                   >
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleToggleStatus(vehicle)}
-                    className={styles.btnToggle}
-                  >
-                    {vehicle.status === 'Published' ? 'Unpublish' : 'Publish'}
-                  </button>
+                  {vehicle.status !== 'Published' && (
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStatus(vehicle)}
+                      className={styles.btnToggle}
+                    >
+                      Publish
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => handleDelete(vehicle.id)}

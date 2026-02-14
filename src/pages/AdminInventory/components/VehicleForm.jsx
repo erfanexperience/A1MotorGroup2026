@@ -119,15 +119,11 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
       alert('Only PDF files are allowed')
       return
     }
-    if (!vehicle?.id) {
-      alert('Save vehicle first, then upload documents.')
-      e.target.value = ''
-      return
-    }
+    const uploadId = vehicle?.id || tempId
     try {
       setDocUploading((prev) => ({ ...prev, [type]: true }))
       const docType = type === 'windowSticker' ? 'windowSticker' : 'carfax'
-      const url = await uploadDocument(vehicle.id, docType, file)
+      const url = await uploadDocument(uploadId, docType, file)
       update(type === 'windowSticker' ? 'windowStickerUrl' : 'carfaxReportUrl', url)
     } catch (err) {
       alert(err.message || 'Failed to upload document')
@@ -140,10 +136,6 @@ export default function VehicleForm({ vehicle, onSave, onCancel }) {
   const handleDocumentButtonClick = (type, e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (!vehicle?.id) {
-      alert('Save vehicle first, then upload documents.')
-      return
-    }
     if (type === 'windowSticker') windowStickerInputRef.current?.click()
     else carfaxInputRef.current?.click()
   }
