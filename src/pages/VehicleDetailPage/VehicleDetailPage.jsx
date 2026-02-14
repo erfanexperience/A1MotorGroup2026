@@ -164,21 +164,26 @@ export default function VehicleDetailPage() {
                   className={styles.galleryImg}
                 />
               </button>
-              {galleryImages.length > 1 && (
-                <div className={styles.galleryThumbsRow}>
-                  {galleryImages.slice(1, 5).map((img, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={styles.galleryThumb}
-                      onClick={() => setLightboxIndex(i + 1)}
-                      aria-label={`View photo ${i + 2} in full screen`}
-                    >
-                      <img src={img.url} alt={img.alt} className={styles.galleryImg} />
-                    </button>
-                  ))}
-                </div>
-              )}
+              {[1, 2, 3, 4].map((idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={styles.galleryThumb}
+                  onClick={() => setLightboxIndex(idx)}
+                  aria-label={`View photo ${idx + 1} in full screen`}
+                >
+                  {galleryImages[idx] ? (
+                    <img src={galleryImages[idx].url} alt={galleryImages[idx].alt} className={styles.galleryImg} />
+                  ) : (
+                    <span className={styles.galleryThumbPlaceholder} aria-hidden>+</span>
+                  )}
+                  {idx === 3 && galleryImages.length > 5 && (
+                    <span className={styles.galleryShowAllOverlay}>
+                      Show all photos
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
             <div className={styles.galleryCarousel} aria-hidden="true">
               <div
