@@ -357,14 +357,8 @@ export default function VehicleDetailPage() {
             <span className={styles.stickyPrice}>${vehicle.price.toLocaleString()}</span>
           )}
           <a href={PHONE_TEL} className={styles.stickyCallBtn}>
-            Call
+            Call us
           </a>
-          <Link
-            to={`/apply-for-financing?vehicleId=${encodeURIComponent(vehicle.id)}`}
-            className={styles.stickyFinanceBtn}
-          >
-            Apply
-          </Link>
         </div>
       </div>
 
