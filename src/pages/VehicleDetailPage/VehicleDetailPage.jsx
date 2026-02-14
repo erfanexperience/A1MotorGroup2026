@@ -131,14 +131,22 @@ export default function VehicleDetailPage() {
         </Link>
       </div>
 
-      <div className={styles.detailTop}>
-        <div className={styles.detailMain}>
-          <header className={styles.titleRow}>
-            <div className={styles.titleBlock}>
-              <h1 className={styles.mainTitle}>{title}</h1>
-              {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-            </div>
-          </header>
+      <header className={styles.titleRow}>
+        <div className={styles.titleBlock}>
+          <h1 className={styles.mainTitle}>{title}</h1>
+          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+        </div>
+        <div className={styles.titleActions}>
+          {vehicle.price > 0 && (
+            <span className={styles.price}>
+              ${vehicle.price.toLocaleString()}
+            </span>
+          )}
+          <a href={PHONE_TEL} className={styles.callBtn}>
+            Call {PHONE}
+          </a>
+        </div>
+      </header>
 
       <section className={styles.gallerySection} aria-label="Vehicle photos">
         {galleryImages.length > 0 ? (
@@ -219,19 +227,6 @@ export default function VehicleDetailPage() {
           </div>
         )}
       </section>
-        </div>
-
-        <aside className={styles.detailSide}>
-          {vehicle.price > 0 && (
-            <span className={styles.price}>
-              ${vehicle.price.toLocaleString()}
-            </span>
-          )}
-          <a href={PHONE_TEL} className={styles.callBtn}>
-            Call {PHONE}
-          </a>
-        </aside>
-      </div>
 
       {lightboxIndex !== null && (
         <Lightbox
