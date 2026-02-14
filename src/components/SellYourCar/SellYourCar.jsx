@@ -14,7 +14,7 @@ export default function SellYourCar() {
       <div className={styles.container}>
         <div className={styles.content}>
           <h2 id="sell-title" className={styles.title}>
-            Sell Your Car Right Here
+            Trade in your car
           </h2>
           <p className={styles.body}>
             Get the guaranteed best market value for your vehicle with our
@@ -32,7 +32,7 @@ export default function SellYourCar() {
         <div className={styles.imageWrap}>
           <img
             src="/Assests/Sell.webp"
-            alt="Sell your car at A1 Motor Group for best market value"
+            alt="Trade in your car at A1 Motor Group for best market value"
             width="560"
             height="360"
             loading="lazy"

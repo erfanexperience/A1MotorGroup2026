@@ -5,7 +5,7 @@ import styles from './Header.module.css'
 const NAV_LINKS = [
   { label: 'Inventory', to: '/', hash: '#inventory' },
   { label: 'Apply For Financing', to: '/apply-for-financing' },
-  { label: 'Sell Your Car', to: '/sell-your-car' },
+  { label: 'Trade in your car', to: '/sell-your-car' },
   { label: 'About Us', to: '/about-us' },
 ]
 

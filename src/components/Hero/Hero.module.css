@@ -135,7 +135,7 @@
 
   .left {
     order: 2;
-    padding: var(--space-sm) var(--space-lg) var(--space-lg);
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
     flex-shrink: 0;
   }
 
@@ -147,13 +147,13 @@
     order: 1;
     flex: 0 0 auto;
     min-height: 0;
-    max-height: 42vh;
-    padding: 0 var(--space-lg) var(--space-xs);
+    max-height: 48vh;
+    padding: 0 var(--space-lg) var(--space-md);
   }
 
   .heroImage {
-    min-height: 200px;
-    max-height: 42vh;
+    min-height: 220px;
+    max-height: 48vh;
     object-fit: cover;
   }
 }

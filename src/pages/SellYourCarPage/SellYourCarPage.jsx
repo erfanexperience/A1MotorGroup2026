@@ -65,7 +65,7 @@ export default function SellYourCarPage() {
       <div className={styles.pageLayout}>
         <div className={styles.leftCol}>
           <header className={styles.header}>
-            <h1 className={styles.title}>Sell your car</h1>
+            <h1 className={styles.title}>Trade in your car</h1>
             <p className={styles.subtitle}>
               Get the best value for your vehicle. Share a few details and we’ll get back to you.
             </p>

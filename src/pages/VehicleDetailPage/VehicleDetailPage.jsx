@@ -316,9 +316,6 @@ export default function VehicleDetailPage() {
 
         <aside className={styles.rightCol}>
           <div className={styles.stickyCard}>
-            {vehicle.price > 0 && (
-              <p className={styles.cardPrice}>${vehicle.price.toLocaleString()}</p>
-            )}
             <a href={PHONE_TEL} className={styles.cardCallBtn}>
               Call Now
             </a>
@@ -329,7 +326,7 @@ export default function VehicleDetailPage() {
               Apply For Financing
             </Link>
             <Link to="/sell-your-car" className={styles.cardSellBtn}>
-              Sell Your Car
+              Trade in your car
             </Link>
             <div className={styles.contactBlock}>
               <p className={styles.contactAddress}>{ADDRESS}</p>
