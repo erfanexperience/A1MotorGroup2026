@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
     return res.status(204).end()
   }
@@ -89,6 +89,40 @@ export default async function handler(req, res) {
       }
       const out = rowToVehicle(data, [])
       return res.status(200).json(out)
+    })
+    return
+  }
+
+  if (req.method === 'PUT') {
+    let id = req.query?.id
+    if (!id && typeof req.url === 'string') {
+      const m = req.url.match(/\/api\/inventory\/([^/?]+)/)
+      if (m) id = m[1]
+    }
+    if (!id) {
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(400).json({ ok: false, error: 'Missing id' })
+    }
+    await requireAdmin(req, res, async () => {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {}
+      const update = vehicleToRow(body)
+      update.updated_at = new Date().toISOString()
+
+      const { data, error } = await supabaseAdmin
+        .from('vehicles')
+        .update(update)
+        .eq('id', id)
+        .select('*')
+        .single()
+
+      if (error) {
+        console.error('inventory update error', { id, supabaseError: error })
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(500).json({ ok: false, error: error.message })
+      }
+      const { data: photos } = await supabaseAdmin.from('vehicle_photos').select('*').eq('vehicle_id', id).order('sort_order')
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json(rowToVehicle(data, photos || []))
     })
     return
   }

@@ -90,7 +90,7 @@ export async function addVehicle(vehicle) {
 }
 
 export async function updateVehicle(id, vehicle) {
-  const data = await apiFetch(`${API_BASE}/inventory/${id}`, {
+  const data = await apiFetch(`${API_BASE}/inventory?id=${encodeURIComponent(id)}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(vehicle),
