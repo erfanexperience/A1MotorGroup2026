@@ -82,6 +82,14 @@
   color: var(--color-text);
 }
 
+.cardPrice {
+  margin: 0 0 var(--space-md);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent, #c41e3a);
+  letter-spacing: -0.02em;
+}
+
 .specs {
   display: flex;
   flex-wrap: wrap;

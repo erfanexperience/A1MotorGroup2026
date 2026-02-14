@@ -27,6 +27,11 @@ function CarCard({ vehicle }) {
         </div>
         <div className={styles.body}>
           <h3 className={styles.cardTitle}>{title}</h3>
+          {vehicle.price > 0 && (
+            <p className={styles.cardPrice}>
+              ${Number(vehicle.price).toLocaleString()}
+            </p>
+          )}
           {specs.length > 0 && (
             <ul className={styles.specs} aria-label="Key specs">
               {specs.map((spec, i) => (

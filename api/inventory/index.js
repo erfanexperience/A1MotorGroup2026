@@ -16,6 +16,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     const all = req.query?.all === '1'
+    const singleId = req.query?.id
     let isAdmin = false
     try {
       const token = req.headers.cookie?.match(/admin_session=([^;]+)/)?.[1]
@@ -24,6 +25,22 @@ export default async function handler(req, res) {
         isAdmin = verifyToken(decodeURIComponent(token))
       }
     } catch (_) {}
+
+    if (singleId) {
+      const { data: row, error } = await supabaseAdmin.from('vehicles').select('*').eq('id', singleId).single()
+      if (error || !row) {
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(404).json({ error: 'Vehicle not found' })
+      }
+      if (row.status !== 'Published' && !isAdmin) {
+        res.setHeader('Content-Type', 'application/json')
+        return res.status(404).json({ error: 'Vehicle not found' })
+      }
+      const { data: photos } = await supabaseAdmin.from('vehicle_photos').select('*').eq('vehicle_id', singleId).order('sort_order')
+      const vehicle = rowToVehicle(row, photos || [])
+      res.setHeader('Content-Type', 'application/json')
+      return res.status(200).json(vehicle)
+    }
 
     const { data: rows, error } = await supabaseAdmin
       .from('vehicles')

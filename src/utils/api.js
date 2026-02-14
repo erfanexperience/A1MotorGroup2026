@@ -61,7 +61,7 @@ export async function getInventory(options = {}) {
 }
 
 export async function getVehicle(id) {
-  const res = await fetch(`${API_BASE}/inventory/${id}`, defaultFetchOptions())
+  const res = await fetch(`${API_BASE}/inventory?id=${encodeURIComponent(id)}`, defaultFetchOptions())
   if (res.status === 404) return null
   const contentType = res.headers.get('content-type') || ''
   if (!res.ok) {
