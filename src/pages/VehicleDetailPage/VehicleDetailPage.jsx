@@ -185,39 +185,47 @@ export default function VehicleDetailPage() {
                 </button>
               ))}
             </div>
-            <div className={styles.galleryCarousel} aria-hidden="true">
-              <div
-                className={styles.carouselTrack}
-                style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
-              >
-                {galleryImages.map((img, i) => (
-                  <div key={i} className={styles.carouselSlide}>
-                    <img src={img.url} alt={img.alt} className={styles.carouselImg} />
-                  </div>
-                ))}
+            <div className={styles.galleryCarouselWrap}>
+              <div className={styles.galleryCarousel} aria-hidden="true">
+                <div
+                  className={styles.carouselTrack}
+                  style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
+                >
+                  {galleryImages.map((img, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={styles.carouselSlide}
+                      onClick={() => setLightboxIndex(i)}
+                      aria-label={`View photo ${i + 1} full screen`}
+                    >
+                      <img src={img.url} alt={img.alt} className={styles.carouselImg} />
+                    </button>
+                  ))}
+                </div>
               </div>
               {galleryImages.length > 1 && (
-                <>
+                <div className={styles.carouselControls}>
                   <button
                     type="button"
                     className={styles.carouselPrev}
-                    onClick={() => setCarouselIndex((i) => (i <= 0 ? galleryImages.length - 1 : i - 1))}
+                    onClick={(e) => { e.stopPropagation(); setCarouselIndex((i) => (i <= 0 ? galleryImages.length - 1 : i - 1)) }}
                     aria-label="Previous photo"
                   >
                     ‹
                   </button>
+                  <span className={styles.carouselDots}>
+                    {carouselIndex + 1} / {galleryImages.length}
+                  </span>
                   <button
                     type="button"
                     className={styles.carouselNext}
-                    onClick={() => setCarouselIndex((i) => (i >= galleryImages.length - 1 ? 0 : i + 1))}
+                    onClick={(e) => { e.stopPropagation(); setCarouselIndex((i) => (i >= galleryImages.length - 1 ? 0 : i + 1)) }}
                     aria-label="Next photo"
                   >
                     ›
                   </button>
-                  <span className={styles.carouselDots}>
-                    {carouselIndex + 1} / {galleryImages.length}
-                  </span>
-                </>
+                </div>
               )}
             </div>
           </>

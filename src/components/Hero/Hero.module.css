@@ -119,15 +119,19 @@
   vertical-align: middle;
 }
 
-/* Tablet & mobile: image on top, then welcome text */
+/* Tablet & mobile: image on top, then welcome text; hero below header, less gap */
 @media (max-width: 1023px) {
+  .hero {
+    padding-top: var(--header-height);
+  }
+
   .container {
     min-height: auto;
   }
 
   .left {
     order: 2;
-    padding: var(--space-2xl) var(--space-lg);
+    padding: var(--space-lg) var(--space-lg) var(--space-2xl);
   }
 
   .content {
@@ -137,7 +141,7 @@
   .right {
     order: 1;
     min-height: 50vh;
-    padding: 0 var(--space-lg) var(--space-lg);
+    padding: 0 var(--space-lg) var(--space-sm);
   }
 
   .heroImage {
