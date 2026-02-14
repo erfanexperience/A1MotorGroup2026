@@ -1,8 +1,11 @@
-import { VEHICLES } from '../data'
 import styles from './SummaryPanel.module.css'
 
-export default function SummaryPanel({ form }) {
-  const vehicle = VEHICLES.find((v) => v.id === form.vehicleId)
+function vehicleDisplayName(v) {
+  return v ? [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ') : ''
+}
+
+export default function SummaryPanel({ form, vehicles = [] }) {
+  const vehicle = vehicles.find((v) => v.id === form.vehicleId)
   const { personal, residential, consents } = form
 
   return (
@@ -14,13 +17,13 @@ export default function SummaryPanel({ form }) {
           <p className={styles.blockLabel}>Vehicle</p>
           <div className={styles.vehicle}>
             <img
-              src={vehicle.image}
+              src={vehicle.coverPhotoUrl || '/Assests/logo.webp'}
               alt=""
               className={styles.vehicleImg}
               width={80}
               height={52}
             />
-            <span className={styles.vehicleName}>{vehicle.name}</span>
+            <span className={styles.vehicleName}>{vehicleDisplayName(vehicle)}</span>
           </div>
         </div>
       )}

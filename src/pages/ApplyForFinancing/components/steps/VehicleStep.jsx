@@ -1,9 +1,16 @@
-import { VEHICLES } from '../../data'
 import styles from './Steps.module.css'
 
-export default function VehicleStep({ form, updateForm }) {
+function vehicleDisplayName(v) {
+  return [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ')
+}
+
+function vehicleSpecs(v) {
+  return [v.bodyClass, v.transmission, v.titleStatus].filter(Boolean)
+}
+
+export default function VehicleStep({ form, updateForm, vehicles = [] }) {
   const selectedId = form.vehicleId
-  const selectedVehicle = VEHICLES.find((v) => v.id === selectedId)
+  const selectedVehicle = vehicles.find((v) => v.id === selectedId)
 
   return (
     <div className={styles.step}>
@@ -20,9 +27,9 @@ export default function VehicleStep({ form, updateForm }) {
           aria-label="Select a vehicle"
         >
           <option value="">Select a vehicle…</option>
-          {VEHICLES.map((v) => (
+          {vehicles.map((v) => (
             <option key={v.id} value={v.id}>
-              {v.name}
+              {vehicleDisplayName(v)}
             </option>
           ))}
         </select>
@@ -30,15 +37,15 @@ export default function VehicleStep({ form, updateForm }) {
       {selectedVehicle && (
         <div className={styles.selectedVehiclePreview}>
           <img
-            src={selectedVehicle.image}
-            alt={selectedVehicle.name}
+            src={selectedVehicle.coverPhotoUrl || '/Assests/logo.webp'}
+            alt={vehicleDisplayName(selectedVehicle)}
             className={styles.selectedVehicleImg}
             width={200}
             height={130}
           />
           <div className={styles.selectedVehicleInfo}>
-            <span className={styles.vehicleName}>{selectedVehicle.name}</span>
-            <span className={styles.vehicleSpecs}>{selectedVehicle.specs.join(' · ')}</span>
+            <span className={styles.vehicleName}>{vehicleDisplayName(selectedVehicle)}</span>
+            <span className={styles.vehicleSpecs}>{vehicleSpecs(selectedVehicle).join(' · ')}</span>
           </div>
         </div>
       )}

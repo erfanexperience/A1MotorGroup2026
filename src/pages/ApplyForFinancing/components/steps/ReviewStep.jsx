@@ -1,8 +1,11 @@
-import { VEHICLES } from '../../data'
 import styles from './Steps.module.css'
 
-export default function ReviewStep({ form }) {
-  const vehicle = VEHICLES.find((v) => v.id === form.vehicleId)
+function vehicleDisplayName(v) {
+  return [v.year, v.make, v.model, v.trim].filter(Boolean).join(' ')
+}
+
+export default function ReviewStep({ form, vehicles = [] }) {
+  const vehicle = vehicles.find((v) => v.id === form.vehicleId)
   const { personal, identity, residential, employment } = form
 
   return (
@@ -13,7 +16,7 @@ export default function ReviewStep({ form }) {
       {vehicle && (
         <section className={styles.reviewBlock}>
           <p className={styles.reviewLabel}>Vehicle</p>
-          <p className={styles.reviewValue}>{vehicle.name}</p>
+          <p className={styles.reviewValue}>{vehicleDisplayName(vehicle)}</p>
         </section>
       )}
       <section className={styles.reviewBlock}>

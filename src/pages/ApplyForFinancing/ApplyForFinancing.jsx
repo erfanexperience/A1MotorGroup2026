@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { getInventory } from '../../utils/api'
 import { INITIAL_FORM, STEPS } from './data'
 import Stepper from './components/Stepper'
 import VehicleStep from './components/steps/VehicleStep'
@@ -14,6 +15,7 @@ export default function ApplyForFinancing() {
   const [searchParams] = useSearchParams()
   const [form, setForm] = useState(INITIAL_FORM)
   const [step, setStep] = useState(0)
+  const [vehicles, setVehicles] = useState([])
 
   useEffect(() => {
     const vehicleId = searchParams.get('vehicleId')
@@ -21,6 +23,13 @@ export default function ApplyForFinancing() {
       setForm((prev) => ({ ...prev, vehicleId }))
     }
   }, [searchParams])
+
+  useEffect(() => {
+    getInventory()
+      .then((list) => setVehicles(Array.isArray(list) ? list : []))
+      .catch(() => setVehicles([]))
+  }, [])
+
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -96,7 +105,7 @@ export default function ApplyForFinancing() {
               <div className={styles.stepTitle}>{STEPS[step]?.title}</div>
 
               {currentStepId === 'vehicle' && (
-            <VehicleStep form={form} updateForm={updateForm} />
+            <VehicleStep form={form} updateForm={updateForm} vehicles={vehicles} />
           )}
           {currentStepId === 'contact' && (
             <ContactStep
@@ -122,7 +131,7 @@ export default function ApplyForFinancing() {
           )}
           {currentStepId === 'review' && (
             <>
-              <ReviewStep form={form} />
+              <ReviewStep form={form} vehicles={vehicles} />
               <div className={styles.checkboxWrap}>
                 <input
                   id="consent"
