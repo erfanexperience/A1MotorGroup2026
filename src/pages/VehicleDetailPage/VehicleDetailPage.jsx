@@ -164,17 +164,21 @@ export default function VehicleDetailPage() {
                   className={styles.galleryImg}
                 />
               </button>
-              {galleryImages.slice(1, 5).map((img, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={styles.galleryThumb}
-                  onClick={() => setLightboxIndex(i + 1)}
-                  aria-label={`View photo ${i + 2} in full screen`}
-                >
-                  <img src={img.url} alt={img.alt} className={styles.galleryImg} />
-                </button>
-              ))}
+              {galleryImages.length > 1 && (
+                <div className={styles.galleryThumbsRow}>
+                  {galleryImages.slice(1, 5).map((img, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={styles.galleryThumb}
+                      onClick={() => setLightboxIndex(i + 1)}
+                      aria-label={`View photo ${i + 2} in full screen`}
+                    >
+                      <img src={img.url} alt={img.alt} className={styles.galleryImg} />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div className={styles.galleryCarousel} aria-hidden="true">
               <div
