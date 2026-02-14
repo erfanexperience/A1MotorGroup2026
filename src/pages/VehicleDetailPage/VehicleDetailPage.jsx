@@ -203,30 +203,30 @@ export default function VehicleDetailPage() {
                     </button>
                   ))}
                 </div>
+                {galleryImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className={styles.carouselPrev}
+                      onClick={(e) => { e.stopPropagation(); setCarouselIndex((i) => (i <= 0 ? galleryImages.length - 1 : i - 1)) }}
+                      aria-label="Previous photo"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.carouselNext}
+                      onClick={(e) => { e.stopPropagation(); setCarouselIndex((i) => (i >= galleryImages.length - 1 ? 0 : i + 1)) }}
+                      aria-label="Next photo"
+                    >
+                      ›
+                    </button>
+                    <span className={styles.carouselDots}>
+                      {carouselIndex + 1} / {galleryImages.length}
+                    </span>
+                  </>
+                )}
               </div>
-              {galleryImages.length > 1 && (
-                <div className={styles.carouselControls}>
-                  <button
-                    type="button"
-                    className={styles.carouselPrev}
-                    onClick={(e) => { e.stopPropagation(); setCarouselIndex((i) => (i <= 0 ? galleryImages.length - 1 : i - 1)) }}
-                    aria-label="Previous photo"
-                  >
-                    ‹
-                  </button>
-                  <span className={styles.carouselDots}>
-                    {carouselIndex + 1} / {galleryImages.length}
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.carouselNext}
-                    onClick={(e) => { e.stopPropagation(); setCarouselIndex((i) => (i >= galleryImages.length - 1 ? 0 : i + 1)) }}
-                    aria-label="Next photo"
-                  >
-                    ›
-                  </button>
-                </div>
-              )}
             </div>
           </>
         ) : (

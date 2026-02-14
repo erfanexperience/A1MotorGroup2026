@@ -264,12 +264,12 @@
   }
 }
 
-/* Mobile carousel – match car image ratio 2400×1586; image fills frame, no overlays */
+/* Mobile carousel – border-radius, arrows + counter on image (previous look); click opens fullscreen */
 .galleryCarousel {
   display: block;
   position: relative;
   margin-top: 0;
-  border-radius: 0;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-bg-elevated);
   width: 100%;
@@ -307,40 +307,50 @@
   display: block;
 }
 
-/* Controls below image on mobile (no layer on top of image) */
-.carouselControls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-md);
-  padding: var(--space-sm) var(--space-lg);
-  background: var(--color-bg-elevated);
-  border-bottom: 1px solid var(--color-border);
-}
-
+/* Arrows and counter overlaid on image (previous style) */
 .carouselPrev,
 .carouselNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: var(--tap-min);
   height: var(--tap-min);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: var(--color-text);
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  font-size: 1.75rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
+  z-index: 1;
+}
+
+.carouselPrev {
+  left: var(--space-sm);
+}
+
+.carouselNext {
+  right: var(--space-sm);
 }
 
 .carouselPrev:hover,
 .carouselNext:hover {
-  background: var(--color-border);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .carouselDots {
+  position: absolute;
+  bottom: var(--space-sm);
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 0.875rem;
-  color: var(--color-text-muted);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  z-index: 1;
 }
 
 .galleryPlaceholder {
