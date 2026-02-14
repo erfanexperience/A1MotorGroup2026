@@ -77,20 +77,73 @@
   outline-offset: 2px;
 }
 
-/* Title row */
-.titleRow {
+/* Top section: gallery takes full width to the left of price/call */
+.detailTop {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  padding: var(--space-lg) var(--space-lg) var(--space-xl);
+  gap: var(--space-xl);
   max-width: 1280px;
   margin: 0 auto;
+  padding: 0 var(--space-lg) var(--space-2xl);
+  align-items: flex-start;
+}
+
+.detailMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.detailSide {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  padding-top: var(--space-lg);
+}
+
+.detailSide .price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.detailSide .callBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-xl);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-inverse);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  transition: background 0.2s;
+}
+
+.detailSide .callBtn:hover {
+  background: var(--color-surface-soft);
+}
+
+@media (max-width: 900px) {
+  .detailTop {
+    flex-direction: column;
+  }
+  .detailSide {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 0;
+  }
+}
+
+/* Title row (inside detailMain) */
+.titleRow {
+  padding: var(--space-lg) 0 var(--space-md);
 }
 
 .titleBlock {
-  flex: 1;
   min-width: 0;
 }
 
@@ -109,53 +162,23 @@
   color: var(--color-text-muted);
 }
 
-.titleActions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-sm);
-}
 
-.price {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.callBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--tap-min);
-  padding: 0 var(--space-xl);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-inverse);
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  transition: background 0.2s;
-}
-
-.callBtn:hover {
-  background: var(--color-surface-soft);
-}
-
-/* Gallery – Airbnb style: one large left, 2x2 right; images fill cells (cover) */
+/* Gallery – full width of left column (to under call button); big left, small 2x2 right */
 .gallerySection {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--space-lg) var(--space-2xl);
+  padding: 0 0 var(--space-xl);
+  width: 100%;
 }
 
 .galleryGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 3fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: var(--space-sm);
+  gap: 4px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  aspect-ratio: 16 / 10;
-  max-height: 480px;
+  aspect-ratio: 16 / 9;
+  max-height: 520px;
+  width: 100%;
 }
 
 .galleryHero {
