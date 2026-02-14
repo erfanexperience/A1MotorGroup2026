@@ -33,12 +33,14 @@ export default function ApplyForFinancing() {
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
 
   const updateForm = useCallback((partial) => {
     setForm((prev) => {
       if (typeof partial === 'function') return partial(prev)
       const next = { ...prev }
       if (partial.vehicleId !== undefined) next.vehicleId = partial.vehicleId
+      if (partial.website !== undefined) next.website = partial.website
       if (partial.personal) next.personal = { ...prev.personal, ...partial.personal }
       if (partial.identity) next.identity = { ...prev.identity, ...partial.identity }
       if (partial.residential) next.residential = { ...prev.residential, ...partial.residential }
@@ -58,18 +60,31 @@ export default function ApplyForFinancing() {
     setStep((s) => Math.max(s - 1, 0))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const consent = form.consents.reviewAccepted
     if (!consent) {
       setErrors((e) => ({ ...e, consent: 'Please confirm to submit.' }))
       return
     }
     setSubmitting(true)
-    console.log('Financing application payload:', form)
-    setTimeout(() => {
+    setSubmitError(null)
+    try {
+      const res = await fetch('/api/forms/financing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.ok) {
+        setSubmitted(true)
+      } else {
+        setSubmitError(data.error || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setSubmitError('Something went wrong. Please try again.')
+    } finally {
       setSubmitting(false)
-      setSubmitted(true)
-    }, 1200)
+    }
   }
 
   const currentStepId = STEPS[step]?.id
@@ -131,7 +146,16 @@ export default function ApplyForFinancing() {
           )}
           {currentStepId === 'review' && (
             <>
+              <div style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
+                <label htmlFor="website-hp">Website</label>
+                <input id="website-hp" type="text" value={form.website ?? ''} onChange={(e) => updateForm({ website: e.target.value })} autoComplete="off" tabIndex={-1} />
+              </div>
               <ReviewStep form={form} vehicles={vehicles} />
+              {submitError && (
+                <p className={styles.submitError} role="alert">
+                  {submitError}
+                </p>
+              )}
               <div className={styles.checkboxWrap}>
                 <input
                   id="consent"

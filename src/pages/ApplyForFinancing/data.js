@@ -18,6 +18,7 @@ export const STEPS = [
 
 export const INITIAL_FORM = {
   vehicleId: '',
+  website: '', // honeypot
   personal: {
     firstName: '',
     lastName: '',

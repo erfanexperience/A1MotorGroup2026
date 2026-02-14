@@ -19,6 +19,7 @@ const INITIAL_FORM = {
   vin: '',
   mileage: '',
   additionalComments: '',
+  website: '', // honeypot
 }
 
 export default function SellYourCarPage() {
@@ -26,6 +27,7 @@ export default function SellYourCarPage() {
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
 
   const update = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -34,14 +36,27 @@ export default function SellYourCarPage() {
   const goNext = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
   const goBack = () => setStep((s) => Math.max(s - 1, 0))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
-    console.log('Sell your car submission:', form)
-    setTimeout(() => {
+    setSubmitError(null)
+    try {
+      const res = await fetch('/api/forms/sell-car', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.ok) {
+        setSubmitted(true)
+      } else {
+        setSubmitError(data.error || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setSubmitError('Something went wrong. Please try again.')
+    } finally {
       setSubmitting(false)
-      setSubmitted(true)
-    }, 1200)
+    }
   }
 
   const currentStepId = STEPS[step]?.id
@@ -79,6 +94,11 @@ export default function SellYourCarPage() {
               <div className={styles.stepTitle}>{STEPS[step]?.title}</div>
 
               <form onSubmit={handleSubmit} className={styles.form}>
+                {/* Honeypot: hidden from users, left empty; bots may fill it */}
+                <div style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
+                  <label htmlFor="website-hp">Website</label>
+                  <input id="website-hp" type="text" name="website" value={form.website} onChange={(e) => update('website', e.target.value)} autoComplete="off" tabIndex={-1} />
+                </div>
                 {currentStepId === 'personal' && (
                   <div className={styles.step}>
                     <div className={styles.row}>
@@ -229,6 +249,11 @@ export default function SellYourCarPage() {
                   </div>
                 )}
 
+                {submitError && (
+                  <p className={styles.submitError} role="alert">
+                    {submitError}
+                  </p>
+                )}
                 <div className={styles.navFooter}>
                   {step > 0 ? (
                     <button type="button" onClick={goBack} className={styles.btnSecondary}>
