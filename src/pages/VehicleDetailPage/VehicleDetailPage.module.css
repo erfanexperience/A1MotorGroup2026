@@ -163,21 +163,26 @@
   background: var(--color-border);
   cursor: pointer;
   overflow: hidden;
-  text-align: left;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .galleryHero {
   aspect-ratio: 16 / 10;
+  min-height: 200px;
 }
 
 .galleryThumb {
   aspect-ratio: 1;
+  min-height: 0;
 }
 
 .galleryImg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -196,16 +201,19 @@
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 1fr 1fr;
     gap: var(--space-sm);
-    aspect-ratio: 16 / 10;
+    height: 420px;
     max-height: 520px;
   }
 
   .galleryHero {
     grid-row: 1 / -1;
+    grid-column: 1;
+    min-height: 0;
     aspect-ratio: auto;
   }
 
   .galleryThumb {
+    min-height: 0;
     aspect-ratio: 1;
   }
 }
@@ -218,7 +226,8 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--color-border);
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
 }
 
 @media (min-width: 768px) {
@@ -236,12 +245,16 @@
 .carouselSlide {
   flex: 0 0 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-border);
 }
 
 .carouselImg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .carouselPrev,
