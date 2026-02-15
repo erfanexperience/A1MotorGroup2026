@@ -467,6 +467,21 @@
   gap: var(--space-md);
 }
 
+.docItem {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-xs);
+  min-width: 180px;
+}
+
+.docBtnImg {
+  width: 100%;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
 .docBtn {
   display: inline-flex;
   align-items: center;

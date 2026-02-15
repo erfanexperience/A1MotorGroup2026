@@ -290,24 +290,30 @@ export default function VehicleDetailPage() {
               <h2 className={styles.sectionTitle}>Documents</h2>
               <div className={styles.docButtons}>
                 {vehicle.carfaxReportUrl && (
-                  <a
-                    href={vehicle.carfaxReportUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.docBtn}
-                  >
-                    View Carfax Report
-                  </a>
+                  <div className={styles.docItem}>
+                    <img src="/Assests/Sticker.webp" alt="" className={styles.docBtnImg} />
+                    <a
+                      href={vehicle.carfaxReportUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.docBtn}
+                    >
+                      View Window Sticker
+                    </a>
+                  </div>
                 )}
                 {vehicle.windowStickerUrl && (
-                  <a
-                    href={vehicle.windowStickerUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.docBtn}
-                  >
-                    View Window Sticker
-                  </a>
+                  <div className={styles.docItem}>
+                    <img src="/Assests/Carfax.webp" alt="" className={styles.docBtnImg} />
+                    <a
+                      href={vehicle.windowStickerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.docBtn}
+                    >
+                      View Carfax Report
+                    </a>
+                  </div>
                 )}
               </div>
             </section>
