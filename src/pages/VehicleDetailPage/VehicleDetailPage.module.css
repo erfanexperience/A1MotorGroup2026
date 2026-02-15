@@ -153,16 +153,16 @@
   background: var(--color-surface-soft);
 }
 
-/* Gallery – full width; one large left, 2x2 right (Airbnb style) */
+/* Gallery – full width; one large left, 2x2 right (Airbnb style); slightly reduced so hero matches 2400×1586 */
 .gallerySection {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--space-lg) var(--space-2xl);
   box-sizing: border-box;
 }
 
-/* Full width, cap height so gallery fits on screen */
+/* Aspect ratio 2400×1586: hero is half width + full height => grid ratio 4800/1586 to avoid letterboxing */
 .galleryGrid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
@@ -171,8 +171,8 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   width: 100%;
-  height: min(65vh, 520px);
-  min-height: 280px;
+  aspect-ratio: 4800 / 1586;
+  min-height: 260px;
 }
 
 .galleryHero {
