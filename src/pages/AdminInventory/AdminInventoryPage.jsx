@@ -126,7 +126,7 @@ export default function AdminInventoryPage() {
   return (
     <div className={styles.page}>
       <div className={styles.greeting}>
-        <img src="/Assests/Nick-2.webp" alt="" className={styles.greetingAvatar} width={112} height={112} />
+        <img src="/Assests/Nick-3.webp" alt="" className={styles.greetingAvatar} width={144} height={144} />
         <p className={styles.greetingText}>{getGreeting()}, Nick</p>
       </div>
       <header className={styles.header}>
