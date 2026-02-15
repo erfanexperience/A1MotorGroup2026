@@ -31,7 +31,7 @@ export default function SellYourCar() {
         </div>
         <div className={styles.imageWrap}>
           <img
-            src="/Assests/Sell.webp"
+            src="/Assests/sell-2.webp"
             alt="Trade in your car at A1 Motor Group for best market value"
             width="560"
             height="360"
