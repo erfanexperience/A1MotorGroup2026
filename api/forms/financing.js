@@ -21,7 +21,9 @@ function flatten(obj, prefix = '') {
 
 function buildBody(data) {
   const flat = flatten(data)
-  const entries = Object.entries(flat)
+  const entries = Object.entries(flat).filter(([k]) => k !== 'vehicleId' && k !== 'vehicleTitle')
+  const vehicleDisplay = data.vehicleTitle && String(data.vehicleTitle).trim() ? data.vehicleTitle : (data.vehicleId || '—')
+  entries.unshift(['Vehicle', vehicleDisplay])
   const rows = entries.map(([k, v]) => `<tr><td><strong>${escapeHtml(k)}</strong></td><td>${escapeHtml(String(v))}</td></tr>`).join('')
   return `
     <p><strong>Submitted:</strong> ${new Date().toISOString()}</p>

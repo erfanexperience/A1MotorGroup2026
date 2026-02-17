@@ -69,10 +69,15 @@ export default function ApplyForFinancing() {
     setSubmitting(true)
     setSubmitError(null)
     try {
+      const selectedVehicle = vehicles.find((v) => v.id === form.vehicleId)
+      const vehicleTitle = selectedVehicle
+        ? [selectedVehicle.year, selectedVehicle.make, selectedVehicle.model, selectedVehicle.trim].filter(Boolean).join(' ')
+        : form.vehicleId || ''
+      const payload = { ...form, vehicleTitle }
       const res = await fetch('/api/forms/financing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       })
       const data = await res.json().catch(() => ({}))
       if (res.ok && data.ok) {
