@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { getInventory } from '../../utils/api'
 import styles from './Inventory.module.css'
@@ -48,6 +48,8 @@ function CarCard({ vehicle }) {
 export default function Inventory() {
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [filterMake, setFilterMake] = useState('')
+  const [sortByPrice, setSortByPrice] = useState('')
 
   useEffect(() => {
     const loadInventory = async () => {
@@ -57,7 +59,6 @@ export default function Inventory() {
         setVehicles(published)
       } catch (error) {
         console.error('Failed to load inventory:', error)
-        // Fallback to empty array if API fails
         setVehicles([])
       } finally {
         setLoading(false)
@@ -65,6 +66,24 @@ export default function Inventory() {
     }
     loadInventory()
   }, [])
+
+  const makes = useMemo(() => {
+    const set = new Set(vehicles.map((v) => v.make).filter(Boolean))
+    return Array.from(set).sort((a, b) => a.localeCompare(b))
+  }, [vehicles])
+
+  const filteredAndSorted = useMemo(() => {
+    let list = vehicles
+    if (filterMake) {
+      list = list.filter((v) => v.make === filterMake)
+    }
+    if (sortByPrice === 'asc') {
+      list = [...list].sort((a, b) => (a.price || 0) - (b.price || 0))
+    } else if (sortByPrice === 'desc') {
+      list = [...list].sort((a, b) => (b.price || 0) - (a.price || 0))
+    }
+    return list
+  }, [vehicles, filterMake, sortByPrice])
 
   return (
     <section id="inventory" className={styles.section} aria-labelledby="inventory-title">
@@ -77,11 +96,50 @@ export default function Inventory() {
         ) : vehicles.length === 0 ? (
           <p className={styles.empty}>No vehicles available at this time.</p>
         ) : (
-          <div className={styles.grid}>
-            {vehicles.map((vehicle) => (
-              <CarCard key={vehicle.id} vehicle={vehicle} />
-            ))}
-          </div>
+          <>
+            <div className={styles.toolbar}>
+              <label className={styles.toolbarLabel} htmlFor="filter-make">
+                Filter by make
+              </label>
+              <select
+                id="filter-make"
+                value={filterMake}
+                onChange={(e) => setFilterMake(e.target.value)}
+                className={styles.select}
+                aria-label="Filter by make"
+              >
+                <option value="">All makes</option>
+                {makes.map((make) => (
+                  <option key={make} value={make}>
+                    {make}
+                  </option>
+                ))}
+              </select>
+              <label className={styles.toolbarLabel} htmlFor="sort-price">
+                Sort by price
+              </label>
+              <select
+                id="sort-price"
+                value={sortByPrice}
+                onChange={(e) => setSortByPrice(e.target.value)}
+                className={styles.select}
+                aria-label="Sort by price"
+              >
+                <option value="">Default</option>
+                <option value="asc">Price: Low to High</option>
+                <option value="desc">Price: High to Low</option>
+              </select>
+            </div>
+            {filteredAndSorted.length === 0 ? (
+              <p className={styles.empty}>No vehicles match the selected filter.</p>
+            ) : (
+              <div className={styles.grid}>
+                {filteredAndSorted.map((vehicle) => (
+                  <CarCard key={vehicle.id} vehicle={vehicle} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
