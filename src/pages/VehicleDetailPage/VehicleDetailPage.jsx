@@ -252,6 +252,8 @@ export default function VehicleDetailPage() {
             <div className={styles.specsGrid}>
               <SpecItem label="VIN" value={vehicle.vin} />
               <SpecItem label="Mileage" value={vehicle.mileage > 0 ? vehicle.mileage.toLocaleString() + ' mi' : null} />
+              <SpecItem label="Exterior" value={vehicle.exteriorColor} />
+              <SpecItem label="Interior" value={vehicle.interiorColor || vehicle.interiorType ? [vehicle.interiorColor, vehicle.interiorType].filter(Boolean).join(' ') : null} />
               <SpecItem label="Body style" value={vehicle.bodyClass} />
               <SpecItem label="Drivetrain" value={vehicle.driveType} />
               <SpecItem label="Transmission" value={vehicle.transmission} />

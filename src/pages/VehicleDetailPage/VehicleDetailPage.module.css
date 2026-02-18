@@ -437,6 +437,7 @@
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  min-width: 0;
 }
 
 .specLabel {
@@ -452,6 +453,10 @@
 .specValue {
   font-size: 1rem;
   color: var(--color-text);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.5;
 }
 
 .description,
